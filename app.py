@@ -10,8 +10,11 @@ def main():
     movie_clip.audio.write_audiofile(output_filename, codec=codec)
 
 
-def get_filenames():
+def get_filenames() -> (str, str, str):
+    # List of supported audio file formats
     codec_choices = ["mp3", "aac", "wma", "wav", "ac3"]
+
+    # Setting up the CL-args parser
     parser = argparse.ArgumentParser(
         'audio_convt', description="Extractors the audio from a given video file.")
 
@@ -25,15 +28,23 @@ def get_filenames():
 
     args = parser.parse_args()
 
+    # The source video file.
     input_filename = args.filename
+
+    # The output audio file.
     output_filename = input_filename
+
+    # Checking whether the provied input file is a valid file.
     if not os.path.isfile(output_filename):
         print("%s is an invalid filename." % output_filename)
         exit(1)
 
+    # If the output filename is provided, then inferring the audio type according to the provided filename.
     output_filename, ext = os.path.splitext(output_filename)
 
+    # Setting up the codec
     codec = args.codec
+
     string_prefix = args.prefix
 
     # Checking for the output string
@@ -43,6 +54,8 @@ def get_filenames():
         output_filename, ext = os.path.splitext(file)
         if ext[1:] in codec_choices:
             codec = ext[1:]
+        else:
+            print("This audio file format is not supported")
 
     return input_filename, os.path.join(path, "%s%s.%s" % (string_prefix, output_filename, codec)), codec if 'w' not in codec else None
 
